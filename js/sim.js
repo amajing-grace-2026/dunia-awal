@@ -336,6 +336,8 @@ function researchDay() {
       const ld = S.byId.get(r.lead);
       if (ld && ld.alive && t.idx >= 12) log('riset', `🧪 ${ld.name} bereksperimen menuju ${t.icon} ${t.name} (±${stage * 25}%): ${pick(RESEARCH_FAIL)}.`, t.idx >= 40 ? 2 : 1);
     }
+    // Masyarakat belum "siap" sebelum ~90% dari tahun target: kemajuan tertahan di ambang penemuan
+    if (r.p >= cost && S.day / YEAR_DAYS < t.yr * 0.9) { r.p = cost * 0.97; continue; }
     if (r.p >= cost) { let ld = S.byId.get(r.lead); if (!ld || !ld.alive) ld = pick(S.alive.filter(x => ageY(x) >= 14)) || pick(S.alive); if (ld) discover(ld, t); }
   }
   S.rDay = {};
