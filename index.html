@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dunia Awal — Simulasi Adam & Hawa</title>
+<meta name="description" content="Simulasi dunia kecil berbentuk lingkaran: Adam dan Hawa, keturunannya, alam, cuaca, penemuan, hingga peradaban.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
+<style>
+:root{--bg:#0f1512;--panel:#17201b;--panel2:#1e2a23;--line:#2c3b32;--text:#e8efe9;--mute:#9db3a4;--acc:#7fd18b;--acc2:#ffd36b;--warn:#ff8a6b;--blue:#8cc6ff;--pink:#ffb3d1}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:10px 16px;background:linear-gradient(90deg,#14231a,#1b2a35);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:17px;letter-spacing:.2px}
+.brand small{display:block;font-weight:400;font-size:11.5px;color:var(--mute)}
+.clock{display:flex;flex-direction:column;min-width:190px}
+.clock b{font-size:16px}
+.clock span{font-size:12px;color:var(--mute)}
+.speeds{display:flex;gap:4px;flex-wrap:wrap;background:#0c120f;border:1px solid var(--line);border-radius:10px;padding:3px}
+.speeds button{border:0;background:transparent;padding:6px 10px;border-radius:7px;font-size:12.5px;line-height:1.15;text-align:center}
+.speeds button small{display:block;font-size:10px;color:var(--mute)}
+.speeds button.on{background:var(--acc);color:#0b1a0f}
+.speeds button.on small{color:#1f3a24}
+.ctrl{display:flex;gap:6px;align-items:center;margin-left:auto}
+.btn{border:1px solid var(--line);background:var(--panel2);padding:7px 12px;border-radius:8px}
+.btn:hover{border-color:var(--acc)}
+.btn.primary{background:var(--acc);color:#0b1a0f;border-color:var(--acc);font-weight:700}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:16px;padding:6px 10px;border-radius:8px;background:#0c120f;border:1px solid var(--line)}
+.timer.low{color:var(--warn)}
+.btn.on{background:var(--acc2);color:#1a1405;border-color:var(--acc2);font-weight:700}
+.rs{margin:3px 0}.rs .bar{margin:2px 0 0}
+body{display:flex;flex-direction:column;height:100vh}
+main{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:0;flex:1;min-height:320px}
+#stage{position:relative;overflow:hidden;background:#000}
+#cv{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+#cv:active{cursor:grabbing}
+.ov{position:absolute;display:flex;gap:6px}
+.ov.tl{top:10px;left:10px;flex-direction:column}
+.ov.tr{top:10px;right:10px;flex-direction:column;align-items:flex-end}
+.chip{background:rgba(10,16,12,.78);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:6px 10px;font-size:12.5px;backdrop-filter:blur(4px)}
+.ov button.chip{min-width:34px}
+.lag{color:var(--warn)}
+aside{background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:12px}
+aside h3{margin:14px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--mute)}
+aside h3:first-child{margin-top:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.stat{background:var(--panel2);border-radius:8px;padding:6px 8px}
+.stat b{display:block;font-size:17px}
+.stat span{font-size:11px;color:var(--mute)}
+.era{background:linear-gradient(90deg,#2b3d23,#23332d);border:1px solid #3d5634;padding:8px 10px;border-radius:9px;font-weight:600}
+.techs{display:flex;flex-wrap:wrap;gap:4px}
+.techs span{background:var(--panel2);border:1px solid var(--line);padding:2px 7px;border-radius:999px;font-size:11.5px}
+.animals{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12.5px}
+#mini{width:100%;height:70px;background:var(--panel2);border-radius:8px}
+#insp{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px}
+#insp .nm{font-size:16px;font-weight:700}
+#insp .row{display:flex;justify-content:space-between;gap:8px;color:var(--mute)}
+#insp .row b{color:var(--text);font-weight:500;text-align:right}
+.bar{height:6px;background:#0d140f;border-radius:4px;overflow:hidden;margin:2px 0 5px}
+.bar i{display:block;height:100%;background:var(--acc)}
+.thought{font-style:italic;color:#d6e6da;background:#121a15;border-left:3px solid var(--acc2);padding:6px 8px;border-radius:4px;margin:6px 0}
+.lnk{color:var(--blue);cursor:pointer;text-decoration:underline dotted}
+#story{height:32vh;flex:none;display:flex;flex-direction:column;border-top:1px solid var(--line);background:#101813}
+.story-head{display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.story-head b{margin-right:6px}
+.filt{border:1px solid var(--line);background:transparent;border-radius:999px;padding:3px 10px;font-size:12px}
+.filt.on{background:var(--panel2);border-color:var(--acc);color:var(--acc)}
+#log{flex:1;overflow:auto;padding:6px 12px;font-size:13.5px}
+.le{padding:3px 0;border-bottom:1px dashed #1f2c24;display:flex;gap:10px}
+.le time{color:var(--mute);font-size:11.5px;min-width:96px;font-variant-numeric:tabular-nums;padding-top:2px}
+.le.imp3{color:#fff}
+.le.t-temu{color:var(--acc2)}
+.le.t-era{color:#ffd36b;font-weight:700}
+.le.t-mati{color:#d9c4c4}
+.le.t-pikir{color:#b8d4c4;font-style:italic}
+.le.t-statistik{color:#9fd0ff}
+footer{height:34px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;color:var(--mute);border-top:1px solid var(--line);background:#0c120f}
+footer a{color:var(--mute)}
+footer img{height:16px;vertical-align:middle;margin-left:4px}
+.modal{position:fixed;inset:0;background:rgba(3,6,4,.78);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.modal[hidden]{display:none}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;max-width:880px;width:100%;max-height:92vh;overflow:auto;padding:22px 24px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.card h1{margin:0 0 6px;font-size:24px}
+.card h2{font-size:15px;margin:20px 0 8px;color:var(--acc)}
+.card p{color:#cfdcd3}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.kpi{background:var(--panel2);border-radius:10px;padding:10px}
+.kpi b{display:block;font-size:22px}
+.kpi span{font-size:12px;color:var(--mute)}
+.tl{list-style:none;margin:0;padding:0;font-size:13.5px}
+.tl li{padding:4px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px}
+.tl li time{color:var(--mute);min-width:74px}
+.cbar{display:flex;align-items:center;gap:8px;font-size:13px;margin:3px 0}
+.cbar span{min-width:150px;color:var(--mute)}
+.cbar i{height:10px;background:var(--warn);border-radius:3px;display:block}
+#sumChart{width:100%;height:180px;background:var(--panel2);border-radius:10px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+@media (max-width:900px){
+  body{height:auto}
+  main{grid-template-columns:1fr;height:auto}
+  #stage{height:62vh}
+  aside{border-left:0;border-top:1px solid var(--line);max-height:none}
+  #story{height:48vh}
+  .ctrl{margin-left:0}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">🌍 <div>Dunia Awal<small>Simulasi kehidupan Adam &amp; Hawa</small></div></div>
+  <div class="clock"><b id="clk">Tahun 1 · Hari 1</b><span id="clk2">🌱 Semi · 06:00</span></div>
+  <div class="speeds" id="speeds"></div>
+  <div class="ctrl">
+    <button class="btn" id="btnPause">▶ Jalankan</button>
+    <div class="timer" id="timer" title="Sisa waktu simulasi (waktu nyata)">15:00</div>
+    <button class="btn" id="btnInf" title="Jalankan terus tanpa batas waktu">♾️ Tanpa batas</button>
+    <button class="btn" id="btnEnd" title="Akhiri sekarang dan lihat ringkasan">⏹</button>
+  </div>
+</header>
+<main>
+  <section id="stage">
+    <canvas id="cv"></canvas>
+    <div class="ov tl">
+      <div class="chip" id="wx">☀️ cerah · 14°C</div>
+      <div class="chip" id="lagChip" hidden><span class="lag">⚠ Perangkat kewalahan — waktu sedikit melambat</span></div>
+    </div>
+    <div class="ov tr">
+      <button class="chip" id="zin" title="Perbesar">＋</button>
+      <button class="chip" id="zout" title="Perkecil">－</button>
+      <button class="chip" id="zreset" title="Lihat seluruh dunia">🌐</button>
+      <button class="chip" id="lbl" title="Tampilkan / sembunyikan nama">🏷️</button>
+    </div>
+  </section>
+  <aside>
+    <h3>Dunia saat ini</h3>
+    <div class="era" id="era">Zaman Batu Tua</div>
+    <div class="stats" id="stats" style="margin-top:8px"></div>
+    <h3>Populasi per tahun</h3>
+    <canvas id="mini"></canvas>
+    <h3>Penemuan (<span id="techN">0</span>/<span id="techT"></span>)</h3>
+    <div class="techs" id="techs"><span style="opacity:.6">Belum ada…</span></div>
+    <h3>Sedang diteliti</h3>
+    <div id="research" style="font-size:12.5px"><span style="opacity:.6">Belum ada…</span></div>
+    <h3>Pekerjaan</h3>
+    <div class="techs" id="jobs"><span style="opacity:.6">Belum ada…</span></div>
+    <h3>Hewan liar</h3>
+    <div class="animals" id="animals"></div>
+    <h3>Detail (klik manusia/hewan/desa)</h3>
+    <div id="insp">Klik seseorang di peta untuk melihat perasaan, pikiran, kebutuhan, dan keinginannya.</div>
+  </aside>
+</main>
+<section id="story">
+  <div class="story-head">
+    <b>📖 Kisah Dunia</b>
+    <button class="filt on" data-f="all">Semua</button>
+    <button class="filt" data-f="imp">Penting</button>
+    <button class="filt" data-f="life">Lahir · Nikah · Wafat</button>
+    <button class="filt" data-f="temu">Penemuan & Alat</button>
+    <button class="filt" data-f="pikir">Pikiran</button>
+    <button class="filt" data-f="alam">Alam & Desa</button>
+  </div>
+  <div id="log"></div>
+</section>
+<footer>
+  Dibuat oleh<img src="brand/logo-kecil-gelap.svg" alt="Amajing Labs">
+  <span>·</span><a href="https://forms.gle/fZAtNMCwKqhQhgpKA" target="_blank" rel="noopener">💬 Kirim masukan</a>
+  <span>·</span><a href="https://saweria.co/amajinglabs" target="_blank" rel="noopener">☕ Traktir kopi</a>
+</footer>
+
+<div class="modal" id="startModal">
+  <div class="card" style="max-width:620px">
+    <h1>🌍 Dunia Awal</h1>
+    <p>Sebuah dunia kecil berbentuk lingkaran baru saja tercipta — gunung, lembah, bukit, sungai, danau, hutan, padang rumput, hewan, angin, awan, dan musim. Di tepi danau, <b>Adam</b> dan <b>Hawa</b> membuka mata untuk pertama kalinya.</p>
+    <p>Mereka punya perasaan, pikiran, kebutuhan, keinginan, dan kreativitas. Mereka akan mencari makan, membuat & memperbaiki alat, menemukan hal baru, jatuh cinta, punya anak — dan keturunannya akan melanjutkan kisah itu. Mereka juga bisa sakit, celaka, menua, dan wafat.</p>
+    <p>⏱️ Simulasi berjalan maksimal <b>15 menit waktu nyata</b>, lalu ringkasan otomatis muncul — atau tekan <b>♾️ Tanpa batas</b> agar terus berjalan. Penemuan butuh percobaan bertahun-tahun: dari batu ke logam butuh ratusan tahun, listrik lebih dari 1.500 tahun, komputer dan satelit lebih lama lagi. Pilih <b>1 dtk = 1 tahun</b> untuk melihat peradaban tumbuh.</p>
+    <p style="color:var(--mute);font-size:12.5px">Tips: gulir/pinch untuk zoom, seret untuk geser, klik seseorang untuk membaca isi hatinya. Setiap dunia unik (seed <span id="seedTxt"></span>).</p>
+    <div class="actions"><button class="btn primary" id="btnStart">▶ Mulai Simulasi</button><button class="btn" id="btnReseed">🎲 Dunia lain</button></div>
+  </div>
+</div>
+<div class="modal" id="endModal" hidden><div class="card" id="endCard"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/world.js"></script>
+<script src="js/sim.js"></script>
+<script src="js/render.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
